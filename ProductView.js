@@ -12,7 +12,7 @@ $(window).load(function() {
         var precioVenta = LideratisHelper.NumberOfDecimal(dataLayer[posicion].productPriceTo, 2);
         var porcentaje = $(".flags p:eq(0)").html();
 
-        // Posicion de Atributos
+        // Variable que almacena la Matriz de Atributos
         var vExploreAttributesPRO = new Array();
         /* Atributos
         Attr1 : Marca de Productos

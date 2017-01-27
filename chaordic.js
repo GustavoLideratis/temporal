@@ -1,4 +1,5 @@
 $(window).load(function() {
+
     window.eventsChaordicClick = function(products) {
         var cantProd = products.length;
         if (cantProd == 1) {
@@ -27,8 +28,6 @@ $(window).load(function() {
             /**/
             /*Fin de Atributos*/
 
-
-            //
             // contentProduct['productID'] = producto.sku;
             // contentProduct['primaryCategory'] = '';
             // contentProduct['productName'] = LideratisHelper.tempClearQuotationMarks(producto.name);
@@ -36,14 +35,32 @@ $(window).load(function() {
             // contentProduct['price'] = LideratisHelper.tempNumberOfDecimal(producto.price, 2);
             // contentProduct['exploreAttributes'] = LideratisHelper.tempAttributesJoin(attr, '-_-');
 
-
-            var vProductID = producto.sku;
+            var vDatosCHRD = products[0];
+            var vProductID = vDatosChaordic.sku;
             var vPrimaryCategory = '';
-            var vProductName = LideratisHelper.tempClearQuotationMarks(producto.name);
-            var vPrice = LideratisHelper.tempNumberOfDecimal(producto.price, 2);
+            var vProductName = LideratisHelper.tempClearQuotationMarks(vDatosChaordic.name);
+            var vPrice = LideratisHelper.tempNumberOfDecimal(vDatosChaordic.price, 2);
             var vExploreAttributesCHRD = new Array();
             var vVirtualCategory = null;
 
+            //Atributos
+            var marcaProducto = vDatosChaordic.details.brand;
+            var precioRegular = LideratisHelper.NumberOfDecimal(vDatosChaordic.oldPrice, 2);
+            var precioVenta = LideratisHelper.NumberOfDecimal(vDatosChaordic.price, 2);
+            //Attr1
+            vExploreAttributesCHRD[1] = marcaProducto;
+            vExploreAttributesCHRD[3] = precioRegular;
+            vExploreAttributesCHRD[4] = precioVenta;
+
+            // Obtenr el descuento en %
+            var paso1 = (vDatosChaordic.price / vDatosChaordic.oldPrice) * 100;
+            var paso2 = Math.round(paso1);
+            var porcentaje = (100 - paso2);
+            if (typeof(vDatosChaordic.oldPrice) != 'undefined') {
+                vExploreAttributesCHRD[5] = porcentaje + '%';
+            }
+
+            // Datos del Tag Shopaction5.
             var dataShopAction5 = new Array();
             dataShopAction5['productID'] = vProductID;
             dataShopAction5['productName'] = vProductName;
