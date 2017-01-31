@@ -8,12 +8,12 @@ window.GLART = "ART: ";
 window.GLSEPARADOR = " | ";
 window.BUSCADORCRE = "Búsqueda con Resultados";
 window.BUSCADORSRE = "Búsqueda sin Resultados";
+window.TITLE = document.title.trim();
 window.INICIO = "Portada";
-
+window.IDENTIFIER = document.getElementById('identifier').getAttribute('content');
 /******************************************************************************************************************/
 // Validacin por SiteID
 /******************************************************************************************************************/
-
 if (window.clientID == "WNF") {
     window.SUFIJO = "WONG";
 } else if (window.clientID == "JMB") {

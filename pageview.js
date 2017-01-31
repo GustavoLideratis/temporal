@@ -26,5 +26,4 @@ $(window).load(function() {
         window.functionLoad();
     }
 
-
 });

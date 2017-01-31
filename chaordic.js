@@ -1,190 +1,184 @@
-$(window).load(function() {
+// Variables globales  que hacen referencia la los Tag.
+window.agregarCarrito = function() {};
+window.mostrarProducto = function() {};
+window.productViewIterator = function() {};
+window.listarProdIterator = function() {};
+// La function "eventsChaordicClick", nos retorna un objecto con los datos de un producto agregado al carrito
+window.eventsChaordicClick = function(products) {
 
-    window.eventsChaordicClick = function(products) {
-        var cantProd = products.length;
-        if (cantProd == 1) {
+    // Declaracion de variables que almacenaran los datos de un ProductView y ShopAction5
+    var cantProd = products.length;
+    var vProdProductID = "";
+    var vProdProductName = "";
+    var vProdPrimaryCategory = "";
+    var vProdExploreAttributes = new Array();
+    var vProdVirtualCategory = "";
+    var vShp5ProductID = "";
+    var vShp5ProductName = "";
+    var vShp5PrimaryCategory = "";
+    var vShp5Quantity = 0;
+    var vShp5Price = 0.0;
+    var vShp5ExploreAttributes = new Array();
+    var vShp5VirtualCategory = "";
 
+    // Se realiza una validacion, de la cantidad de productos que se obtienen de la funcción.
+    //  cantProd es igual a 1 => Producto unico.
+    //  cantProd  es mayor a 1 => Productos en Combo
+    if (cantProd == 1) {
+        var producto = products[0];
+        var contentProduct = new Array();
+        var typeDataOfPrice = typeof producto.oldPrice;
+        var validaBrand = ((typeof(producto.details.brand) != 'undefined') ? producto.details.brand : producto.details.brandName);
+        /* Atributos del Tag ShopAction5
+        Attr1 : Marca
+        Attr3 : Precio Regular
+        Attr4 : Precio de Venta
+        Attr5 : Porcentaje
+        */
+        vShp5ExploreAttributes[1] = validaBrand;
+        vShp5ExploreAttributes[3] = LideratisHelper.NumberOfDecimal(producto.oldPrice, 2);
+        vShp5ExploreAttributes[4] = LideratisHelper.NumberOfDecimal(producto.price, 2);
+        var fPercent = Math.round((producto.price / producto.oldPrice) * 100);
+        var percent = 100 - fPercent;
+        if (typeDataOfPrice != 'undefined')
+            vShp5ExploreAttributes[5] = percent + '%';
 
-            var producto = products[0];
-            var contentProduct = new Array();
-            var identifi = typeof producto.oldPrice;
+        // Declaracion de variables para almacenar datos del ShopAction5 - Tag ShopAction5
+        vShp5ProductID = producto.sku;
+        vShp5PrimaryCategory = ((window.IDENTIFIER == 'inicio') ? 'informativo' : window.IDENTIFIER);
+        vShp5ProductName = LideratisHelper.Price(producto.name, '"', '');
+        vShp5Quantity = 1;
+        vShp5Price = LideratisHelper.NumberOfDecimal(producto.price, 2);
+
+        var tagShopAction5 = fnDataShopAction5(vShp5ProductID,
+            vShp5PrimaryCategory,
+            vShp5ProductName,
+            vShp5Quantity,
+            vShp5Price,
+            vShp5ExploreAttributes,
+            vShp5VirtualCategory);
+
+        /* Atributos del Tag ProductView
+        Attr1 : Marca
+        Attr3 : Precio Regular
+        Attr4 : Precio de Venta
+        Attr5 : Porcentaje
+        */
+        vProdExploreAttributes[1] = validaBrand;
+        vProdExploreAttributes[3] = LideratisHelper.NumberOfDecimal(producto.oldPrice, 2);
+        vProdExploreAttributes[4] = LideratisHelper.NumberOfDecimal(producto.price, 2);
+        if (typeDataOfPrice != 'undefined')
+            vProdExploreAttributes[5] = percent + '%';
+        // Declaracion de variables para almacenar datos del ProductView - Tag ProductView
+        vProdProductID = producto.sku;
+        vProdProductName = LideratisHelper.Price(producto.name, '"', '');
+        vProdPrimaryCategory = ((window.IDENTIFIER == 'inicio') ? 'informativo' : window.IDENTIFIER);
+        vProdVirtualCategory = producto.url.split('cm_vc=')[1];
+
+        var dataProductView = fnDataProductView(vProdProductID,
+            vProdProductName,
+            vProdPrimaryCategory,
+            vProdExploreAttributes,
+            vProdVirtualCategory);
+
+        tagProductView = new LideratisLibrary.ProductView(dataProductView);
+        digitalData = new LideratisLibrary.ShopAction5_BtnClick(tagShopAction5);
+        digitalData.product = [tagProductView.product[0]];
+        agregarCarrito();
+        mostrarProducto();
+    } else if (cantProd > 1) {
+        //digitalData = new Array();
+        //var cart = new Array();
+        //LideratisLibrary.initShopAction5Content();
+        for (var i = 0; i < cantProd; i++) {
+            var producto = products[i];
+            var indice = i;
+            var typeDataOfPrice = typeof producto.oldPrice;
             var validaBrand = ((typeof(producto.details.brand) != 'undefined') ? producto.details.brand : producto.details.brandName);
-            var attr = new Array();
-            /*Atributos*/
-            attr.push(producto.details.brand);
-            attr.push('');
-            attr.push(LideratisHelper.tempNumberOfDecimal(producto.oldPrice, 2));
-            attr.push(LideratisHelper.tempNumberOfDecimal(producto.price, 2));
-            /**/
-            //console.log(producto.oldPrice + '-'+ producto.price);
-            var verifica = (producto.price / producto.oldPrice) * 100;
-            //console.log(verifica);
-            var antPorcet = Math.round(verifica);
-            //console.log(antPorcet);
-            var porcent = (100 - antPorcet);
-            if (identifi != 'undefined') {
-                attr.push(porcent + '%');
-            }
-            /**/
-            /*Fin de Atributos*/
+            //var contentProduct02 = [];
+            /* Atributos del Tag ShopAction5
+            Attr1 : Marca
+            Attr3 : Precio Regular
+            Attr4 : Precio de Venta
+            Attr5 : Porcentaje
+            */
+            vShp5ExploreAttributes[1] = validaBrand;
+            vShp5ExploreAttributes[3] = LideratisHelper.NumberOfDecimal(producto.oldPrice, 2);
+            vShp5ExploreAttributes[4] = LideratisHelper.NumberOfDecimal(producto.price, 2);
+            var fPercent = Math.round((producto.price / producto.oldPrice) * 100);
+            var percent = 100 - fPercent;
 
-            // contentProduct['productID'] = producto.sku;
-            // contentProduct['primaryCategory'] = '';
-            // contentProduct['productName'] = LideratisHelper.tempClearQuotationMarks(producto.name);
-            // contentProduct['quantity'] = '1';
-            // contentProduct['price'] = LideratisHelper.tempNumberOfDecimal(producto.price, 2);
-            // contentProduct['exploreAttributes'] = LideratisHelper.tempAttributesJoin(attr, '-_-');
+            // Declaracion de variables para almacenar datos del ShopAction5 - Tag ShopAction5
+            vShp5ProductID = producto.sku;
+            vShp5PrimaryCategory = ((window.IDENTIFIER == 'inicio') ? 'informativo' : window.IDENTIFIER);
+            vShp5ProductName = LideratisHelper.price(producto.name, '"', '');
+            vShp5Quantity = 1;
+            vShp5Price = LideratisHelper.NumberOfDecimal(producto.price, 2);
 
-            var vDatosCHRD = products[0];
-            var vProductID = vDatosChaordic.sku;
-            var vPrimaryCategory = '';
-            var vProductName = LideratisHelper.tempClearQuotationMarks(vDatosChaordic.name);
-            var vPrice = LideratisHelper.tempNumberOfDecimal(vDatosChaordic.price, 2);
-            var vExploreAttributesCHRD = new Array();
-            var vVirtualCategory = null;
+            var dataShopAction5 = fnDataShopAction5(vShp5ProductID,
+                vShp5PrimaryCategory,
+                vShp5ProductName,
+                vShp5Quantity,
+                vShp5Price,
+                vShp5ExploreAttributes,
+                vShp5VirtualCategory);
+            dataShopAction5['index'] = indice;
+            LideratisLibrary.ShopAction5Content(dataShopAction5);
+            /* Atributos del Tag ProductView
+            Attr1 : Marca
+            Attr3 : Precio Regular
+            Attr4 : Precio de Venta
+            Attr5 : Porcentaje
+            */
+            vProdExploreAttributes[1] = validaBrand;
+            vProdExploreAttributes[3] = LideratisHelper.NumberOfDecimal(producto.oldPrice, 2);
+            vProdExploreAttributes[4] = LideratisHelper.NumberOfDecimal(producto.price, 2);
+            if (typeDataOfPrice != 'undefined')
+                vProdExploreAttributes[5] = percent + '%';
 
-            //Atributos
-            var marcaProducto = vDatosChaordic.details.brand;
-            var precioRegular = LideratisHelper.NumberOfDecimal(vDatosChaordic.oldPrice, 2);
-            var precioVenta = LideratisHelper.NumberOfDecimal(vDatosChaordic.price, 2);
-            //Attr1
-            vExploreAttributesCHRD[1] = marcaProducto;
-            vExploreAttributesCHRD[3] = precioRegular;
-            vExploreAttributesCHRD[4] = precioVenta;
-
-            // Obtenr el descuento en %
-            var paso1 = (vDatosChaordic.price / vDatosChaordic.oldPrice) * 100;
-            var paso2 = Math.round(paso1);
-            var porcentaje = (100 - paso2);
-            if (typeof(vDatosChaordic.oldPrice) != 'undefined') {
-                vExploreAttributesCHRD[5] = porcentaje + '%';
-            }
-
-            // Datos del Tag Shopaction5.
-            var dataShopAction5 = new Array();
-            dataShopAction5['productID'] = vProductID;
-            dataShopAction5['productName'] = vProductName;
-            dataShopAction5['quantity'] = '1';
-            dataShopAction5['price'] = vPrice;
-            dataShopAction5['primaryCategory'] = vPrimaryCategory;
-            dataShopAction5['exploreAttributes'] = LideratisHelper.GetArrayAttributes(vExploreAttributesCHRD);
-            dataShopAction5['virtualCategory'] = vVirtualCategory;
-
-
-
-
-
-
-
-            /*Product view*/
-            var productViewList = new Array();
-            var attrpro = new Array();
-            attrpro.push(validaBrand);
-            attrpro.push(LideratisHelper.tempNumberOfDecimal(producto.oldPrice, 2));
-            attrpro.push(LideratisHelper.tempNumberOfDecimal(producto.price, 2));
-            if (identifi != 'undefined') {
-                attrpro.push(porcent + '%');
-            }
-            productViewList['productID'] = producto.sku;
-            productViewList['productName'] = LideratisHelper.tempClearQuotationMarks(producto.name);
-            productViewList['primaryCategory'] = ((identificador == 'inicio') ? 'informativo' : identificador);
-            productViewList['exploreAttributes'] = LideratisHelper.tempAttributesJoin(attrpro, '-_-');
-            productViewList['virtualCategory'] = producto.url.split('cm_vc=')[1];
-
-
-
-
-
-
-
-            var vProductID = vtxctx.skus;
-            var vProductName = dataLayer[0].productName;
-            var vPrimaryCategory = dataLayer[0].productCategoryId;
-            var vPrice = LideratisHelper.tempNumberOfDecimal(dataLayer[0].productPriceTo, 2);
-
-            var dataProductView = new Array();
-            // Datos del Tag Productview.
-            dataProductView['productID'] = vProductID;
-            dataProductView['productName'] = vProductName;
-            dataProductView['primaryCategory'] = vPrimaryCategory;
-            dataProductView['exploreAttributes'] = LideratisHelper.GetArrayAttributes(vExploreAttributesPRO);
-
-
-
-
-
-
-
-
-
-            contentProductView = new LideratisLibrary.ProductView(productViewList);
-            /*Fin Product View*/
-            window.digitalData = new LideratisLibrary.ShopAction5_BtnClick(contentProduct);
-            window.digitalData.product = [contentProductView.product[0]];
-            agregarCarrito();
-            mostrarProducto();
-        } else if (cantProd > 1) {
-            var digitalData = new Array();
-            var cart = new Array();
-            //LideratisLibrary.initShopAction5Content();
-            for (var i = 0; i < cantProd; i++) {
-                var producto = products[i];
-                var validaBrand = ((typeof(producto.details.brand) != 'undefined') ? producto.details.brand : producto.details.brandName);
-                //console.log(producto);
-                var contentProduct = [];
-                var identifi = typeof producto.oldPrice;
-                var attr = new Array();
-                /*Atributos*/
-                attr.push(producto.details.brand);
-                attr.push('');
-                attr.push(LideratisHelper.tempNumberOfDecimal(producto.oldPrice, 2));
-                attr.push(LideratisHelper.tempNumberOfDecimal(producto.price, 2));
-                /**/
-                //console.log(producto.oldPrice + '-'+ producto.price);
-                var verifica = (producto.price / producto.oldPrice) * 100;
-                //console.log(verifica);
-                var antPorcet = Math.round(verifica);
-                //console.log(antPorcet);
-                var porcent = (100 - antPorcet);
-                if (identifi != 'undefined') {
-                    attr.push(porcent + '%');
-                }
-                /*Fin de Atributos*/
-                contentProduct['index'] = i;
-                contentProduct['productID'] = producto.sku;
-                contentProduct['primaryCategory'] = ((identificador == 'inicio') ? 'informativo' : identificador);
-                contentProduct['productName'] = LideratisHelper.tempClearQuotationMarks(producto.name);
-                contentProduct['quantity'] = '1';
-                contentProduct['price'] = LideratisHelper.tempNumberOfDecimal(producto.price, 2);
-                contentProduct['exploreAttributes'] = LideratisHelper.tempAttributesJoin(attr, '-_-');
-                LideratisLibrary.ShopAction5Content(contentProduct);
-                /*Product view*/
-                var productViewList = new Array();
-                var attrpro = new Array();
-                attrpro.push(validaBrand);
-                attrpro.push(LideratisHelper.tempNumberOfDecimal(producto.oldPrice, 2));
-                attrpro.push(LideratisHelper.tempNumberOfDecimal(producto.price, 2));
-                if (identifi != 'undefined') {
-                    attrpro.push(porcent + '%');
-                }
-                productViewList['index'] = i;
-                productViewList['productID'] = producto.sku;
-                productViewList['productName'] = LideratisHelper.tempClearQuotationMarks(producto.name);
-                productViewList['primaryCategory'] = ((identificador == 'inicio') ? 'informativo' : identificador);
-                productViewList['exploreAttributes'] = LideratisHelper.tempAttributesJoin(attrpro, '-_-');
-                productViewList['virtualCategory'] = producto.url.split('cm_vc=')[1];
-                LideratisLibrary.ProductView_content(productViewList);
-                /*Fin Product View*/
-            }
-            window.digitalData = {
-                'product': LideratisLibrary.ProductViewIterator()
-            }
-            window.digitalData.cart = {
-                'item': LideratisLibrary.ShopAction5()
-            }
-            window.productViewIterator();
-            window.listarProdIterator();
+            // Declaracion de variables para almacenar datos del ProductView - Tag ProductView
+            vProdProductID = producto.sku;
+            vProdProductName = LideratisHelper.Price(producto.name, '"', '');
+            vProdPrimaryCategory = ((window.IDENTIFIER == 'inicio') ? 'informativo' : window.IDENTIFIER);
+            vProdVirtualCategory = producto.url.split('cm_vc=')[1];
+            var dataProductView = fnDataProductView(vProdProductID,
+                vProdProductName,
+                vProdPrimaryCategory,
+                vProdExploreAttributes,
+                vProdVirtualCategory);
+            dataProductView['index'] = indice;
+            LideratisLibrary.ProductView_content(dataProductView);
         }
+        digitalData = {
+            'product': LideratisLibrary.ProductViewIterator()
+        }
+        digitalData.cart = {
+            'item': LideratisLibrary.ShopAction5()
+        }
+        window.productViewIterator();
+        window.listarProdIterator();
     }
+}
 
-});
+// Function que nos retorna, un objeto con los datos del Tag ShopAction5
+fnDataShopAction5 = function(vShp5ProductID, vShp5PrimaryCategory, vShp5ProductName, vShp5Quantity, vShp5Price, vShp5ExploreAttributes, vShp5VirtualCategory) {
+    dataShopAction5 = new Array();
+    dataShopAction5['productID'] = vShp5ProductID;
+    dataShopAction5['primaryCategory'] = vShp5PrimaryCategory;
+    dataShopAction5['productName'] = vShp5ProductName;
+    dataShopAction5['quantity'] = vShp5Quantity;
+    dataShopAction5['price'] = vShp5Price;
+    dataShopAction5['exploreAttributes'] = LideratisHelper.GetArrayAttributes(vShp5ExploreAttributes);
+    dataShopAction5['virtualCategory'] = vShp5VirtualCategory;
+    return dataShopAction5;
+}
+// Function que nos retorna, un objeto con los datos del Tag ProductView
+fnDataProductView = function(vProdProductID, vProdProductName, vProdPrimaryCategory, vProdExploreAttributes, vProdVirtualCategory) {
+    dataProductView = new Array();
+    dataProductView['productID'] = vProdProductID;
+    dataProductView['productName'] = vProdProductName;
+    dataProductView['primaryCategory'] = vProdPrimaryCategory;
+    dataProductView['exploreAttributes'] = LideratisHelper.GetArrayAttributes(vProdExploreAttributes);
+    dataProductView['virtualCategory'] = vProdVirtualCategory;
+    return dataProductView;
+}
